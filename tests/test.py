@@ -22,7 +22,7 @@ def test_create_item_invalid():
     response = client.post("/items/", json={"id": "1"})
     assert response.status_code == 422
 
-def test_get_items_filled():
+def test_create_items_check():
     response = client.get("/items/")
     assert response.status_code == 200
     print("reponse = ", response.json())
@@ -37,3 +37,9 @@ def test_delete_item_not_found():
     response = client.delete("/items/10")
     assert response.status_code == 404
     assert response.json() == {"detail": "Item not found"}
+
+def test_delete_item_check():
+    response = client.get("/items/")
+    assert response.status_code == 200
+    print("reponse = ", response.json())
+    assert response.json() == []
