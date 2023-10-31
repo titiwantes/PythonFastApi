@@ -43,3 +43,7 @@ def test_delete_item_check():
     assert response.status_code == 200
     print("reponse = ", response.json())
     assert response.json() == []
+
+def test_invalid_id():
+    response = client.post("/items/", json={"id": "a", "name": "Item 1"})
+    assert response.status_code == 422

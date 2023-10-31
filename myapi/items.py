@@ -1,9 +1,15 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from fastapi import  HTTPException
 
 class Item(BaseModel):
     id: str
     name: str
+
+    @field_validator('id')
+    def validate_id(cls, value):
+        if len(value) < 1 or not value.isdigit():
+            raise ValueError("Invalid id")
+        return value
 
 class ItemHandler:
     def __init__(self):
@@ -17,7 +23,9 @@ class ItemHandler:
             newItem = Item(id=item.id, name=item.name)
             self.items.append(newItem)
             return newItem
-        except:
+        except ValueError as e:
+                raise HTTPException(status_code=422, detail=str(e))
+        except Exception as e:
             raise HTTPException(status_code=400, detail="Invalid item")
 
     def delete_item(self, item_id: str):
