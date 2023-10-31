@@ -2,11 +2,8 @@ from fastapi import FastAPI, HTTPException
 from typing import Optional, List
 from pydantic import BaseModel
 import datetime
-from middleware import Middleware
 
 app = FastAPI()
-app.add_middleware(Middleware)
-
 
 class Item(BaseModel):
     id: str
@@ -22,16 +19,15 @@ async def get_items():
 async def create_item(item: Item):
     try:
         newItem = Item(id=item.id, name=item.name)
-        items.append(newItem.model_dump())
-        return newItem.model_dump()
+        items.append(newItem.dict())
+        return newItem
     except:
         raise HTTPException(status_code=400, detail="Invalid item")
 
 @app.delete("/items/{item_id}", response_model=dict)
 async def delete_item(item_id: str):
-    print (items, item_id)
     item = next((item for item in items if item["id"] == item_id), None)
-    print(item)
+    for i in items:print(i)
     if item is None: raise HTTPException(status_code=404, detail="Item not found")
     items.remove(item)
     return item
