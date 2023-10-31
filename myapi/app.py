@@ -1,8 +1,8 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from typing import List
 from starlette.middleware.base import BaseHTTPMiddleware
-from middleware import CustomMiddleware
-from items import ItemHandler, Item
+from .middleware import CustomMiddleware
+from .items import ItemHandler, Item
 
 item_handler = ItemHandler()
 
