@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException
 from typing import Optional, List
 from pydantic import BaseModel
 import datetime
+import logging
+
 
 app = FastAPI()
 
@@ -27,15 +29,15 @@ async def create_item(item: Item):
 @app.delete("/items/{item_id}", response_model=dict)
 async def delete_item(item_id: str):
     item = next((item for item in items if item["id"] == item_id), None)
-    for i in items:print(i)
     if item is None: raise HTTPException(status_code=404, detail="Item not found")
     items.remove(item)
     return item
 
+
+logging.basicConfig(filename="api.log", level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
 @app.middleware("http")
 async def log_requests(request, call_next):
-    start_time = datetime.datetime.utcnow()
     response = await call_next(request)
-    end_time = datetime.datetime.utcnow()
-    print(f"method:{request.method} url:{request.url} status_code:{response.status_code} start:{start_time} end:{end_time} ")
+    logging.info(f"method:{request.method} url:{request.url} status_code:{response.status_code}")
     return response
